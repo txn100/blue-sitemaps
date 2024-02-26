@@ -32,6 +32,7 @@ const badgeStyle = {
 
 // Updated filters with keyword variations
 const filters = [
+  { name: 'All', keywords: [], icon: '' },
   { name: 'PowerBI', keywords: ['power bi', 'powerbi', 'Power BI'], icon: '📘' },
   { name: 'Fabric', keywords: ['Fabric', 'fabric'], icon: '📊' },
   { name: 'Synapse', keywords: ['Synapse', 'synapse'], icon: '🌐' },
@@ -39,9 +40,9 @@ const filters = [
   { name: 'Dataverse', keywords: ['Dataverse', 'dataverse'], icon: '📘' },
   { name: 'Python', keywords: ['Python', 'python'], icon: '📊' },
   { name: 'Git', keywords: ['git', 'Git'], icon: '🌐' },
-  { name: 'Cloud', keywords: ['Cloud', 'cloud'], icon: '⚡' },
+  { name: 'Cloud', keywords: ['Cloud', 'cloud'], icon: '☁️' },
   { name: 'Certification', keywords: ['Certification', 'certification'], icon: '⚡' },
-  { name: 'Unfiltered', keywords: [], icon: 'All' },
+ 
 ];
 
 const FilterComponent = ({ articles, onFilterSelect }) => {

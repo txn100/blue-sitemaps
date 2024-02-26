@@ -10,8 +10,10 @@ const App = () => {
   const [sortOrder, setSortOrder] = useState('desc');
   const [currentFilterKeywords, setCurrentFilterKeywords] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedWebsite, setSelectedWebsite] = useState('');
+  const [selectedWebsites, setSelectedWebsites] = useState([]); // Changed to array
   const [uniqueWebsites, setUniqueWebsites] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]); // Changed to array
+  const [uniqueTypes, setUniqueTypes] = useState([]);
 
   useEffect(() => {
     const fetchCSV = async () => {
@@ -47,6 +49,9 @@ const App = () => {
             setArticles(articlesWithDates);
             const websites = [...new Set(articlesWithDates.map(article => article.website))].filter(Boolean);
             setUniqueWebsites(websites);
+
+            const types = [...new Set(articlesWithDates.map(article => article.type))].filter(Boolean);
+            setUniqueTypes(types.map(type => ({ value: type, label: type })));
           }
         });
       } catch (error) {
@@ -59,13 +64,16 @@ const App = () => {
   useEffect(() => {
     const filteredArticles = articles.filter(article => {
       const articleLower = article.cured_name.toLowerCase();
-      return (currentFilterKeywords.length === 0 || currentFilterKeywords.some(keyword => articleLower.includes(keyword.toLowerCase())))
-        && (!searchQuery || articleLower.includes(searchQuery.toLowerCase()))
-        && (!selectedWebsite || article.website === selectedWebsite);
+      const matchesKeywords = currentFilterKeywords.length === 0 || currentFilterKeywords.some(keyword => articleLower.includes(keyword.toLowerCase()));
+      const matchesSearchQuery = !searchQuery || articleLower.includes(searchQuery.toLowerCase());
+      const matchesWebsites = selectedWebsites.length === 0 || selectedWebsites.includes(article.website);
+      const matchesTypes = selectedTypes.length === 0 || selectedTypes.includes(article.type);
+
+      return matchesKeywords && matchesSearchQuery && matchesWebsites && matchesTypes;
     }).sort((a, b) => sortOrder === 'asc' ? a.date - b.date : b.date - a.date);
 
     setDisplayedArticles(filteredArticles);
-  }, [sortOrder, articles, currentFilterKeywords, searchQuery, selectedWebsite]);
+  }, [sortOrder, articles, currentFilterKeywords, searchQuery, selectedWebsites, selectedTypes]);
 
   const handleFilterSelection = (keywords) => {
     setCurrentFilterKeywords(keywords);
@@ -75,8 +83,12 @@ const App = () => {
     setSearchQuery(query);
   };
 
-  const handleWebsiteSelect = (website) => {
-    setSelectedWebsite(website);
+  const handleWebsiteSelect = (websites) => {
+    setSelectedWebsites(websites.map(website => website.value));
+  };
+
+  const handleTypeSelect = (types) => {
+    setSelectedTypes(types.map(type => type.value));
   };
 
   return (
@@ -86,6 +98,8 @@ const App = () => {
         onSearch={handleSearch} 
         websites={uniqueWebsites} 
         onWebsiteSelect={handleWebsiteSelect}
+        articleTypes={uniqueTypes}
+        onTypeSelect={handleTypeSelect}
       />
       <div style={{ display: 'flex' }}>
         <div style={{ width: '20%', minWidth: '200px' }}>
