@@ -15,24 +15,29 @@ const App = () => {
 
   useEffect(() => {
     const fetchCSV = async () => {
-      const response = await fetch('/sitemap.csv');
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder('utf-8');
-      const csv = decoder.decode(result.value);
-      Papa.parse(csv, {
-        header: true,
-        complete: (results) => {
-          const articlesWithDates = results.data.map(article => ({
-            ...article,
-            date: new Date(article.lastmod),
-            cured_name: article.cured_name || 'No Title'
-          }));
-          setArticles(articlesWithDates);
-          const websites = [...new Set(articlesWithDates.map(article => article.website))].filter(Boolean);
-          setUniqueWebsites(websites);
-        }
-      });
+      try {
+        const response = await fetch('/sitemap.csv');
+        const reader = response.body.getReader();
+        const result = await reader.read();
+        const decoder = new TextDecoder('utf-8');
+        const csv = decoder.decode(result.value);
+        Papa.parse(csv, {
+          header: true,
+          complete: (results) => {
+            const articlesWithDates = results.data.map(article => ({
+              ...article,
+              date: new Date(article.lastmod || ''),
+              cured_name: article.cured_name || 'No Title',
+              website: article.website || 'No Website'
+            }));
+            setArticles(articlesWithDates);
+            const websites = [...new Set(articlesWithDates.map(article => article.website))].filter(Boolean);
+            setUniqueWebsites(websites);
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching or parsing CSV:', error);
+      }
     };
     fetchCSV();
   }, []);
