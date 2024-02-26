@@ -18,10 +18,24 @@ const App = () => {
       try {
         const response = await fetch('/sitemap.csv');
         const reader = response.body.getReader();
-        const result = await reader.read();
-        const decoder = new TextDecoder('utf-8');
-        const csv = decoder.decode(result.value);
-        Papa.parse(csv, {
+        let receivedLength = 0;
+        let chunks = [];
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          chunks.push(value);
+          receivedLength += value.length;
+        }
+        const chunksAll = new Uint8Array(receivedLength);
+        let position = 0;
+        for (let chunk of chunks) {
+          chunksAll.set(chunk, position);
+          position += chunk.length;
+        }
+        const resultString = new TextDecoder("utf-8").decode(chunksAll);
+        Papa.parse(resultString, {
           header: true,
           complete: (results) => {
             const articlesWithDates = results.data.map(article => ({
