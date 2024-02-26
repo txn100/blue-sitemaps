@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // Styles for the FilterComponent
 const filterListStyle = {
@@ -46,44 +46,49 @@ const filters = [
 ];
 
 const FilterComponent = ({ articles, onFilterSelect }) => {
-  const [selectedFilter, setSelectedFilter] = useState('Unfiltered');
+  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [sortedFilters, setSortedFilters] = useState([]);
 
-  const articleMatchesKeywords = (article, keywords) => {
-    if (keywords.length === 0) return true; // Match all for Unfiltered
-    const articleLower = article.cured_name.toLowerCase();
-    return keywords.some(keyword => articleLower.includes(keyword.toLowerCase()));
-  };
+  useEffect(() => {
+    const calculateFilterCount = filter => {
+      const articleMatchesKeywords = (article, keywords) => {
+        if (keywords.length === 0) return true;
+        return keywords.some(keyword => article.cured_name.toLowerCase().includes(keyword.toLowerCase()));
+      };
 
-  const calculateFilterCount = (filterKeywords) => {
-    return articles.filter(article => 
-      article.cured_name && articleMatchesKeywords(article, filterKeywords)
-    ).length;
-  };
+      return articles.filter(article => articleMatchesKeywords(article, filter.keywords)).length;
+    };
 
-  const handleFilterClick = (filterName) => {
+    const filtersWithCount = filters.map(filter => ({
+      ...filter,
+      count: calculateFilterCount(filter)
+    }));
+
+    const sorted = filtersWithCount
+      .filter(filter => filter.name !== 'All')
+      .sort((a, b) => b.count - a.count);
+
+    setSortedFilters([filtersWithCount.find(filter => filter.name === 'All'), ...sorted]);
+  }, [articles]);
+
+  const handleFilterClick = filterName => {
     setSelectedFilter(filterName);
-    const filterKeywords = filters.find(f => f.name === filterName)?.keywords || [];
-    onFilterSelect(filterKeywords);
+    onFilterSelect(filters.find(f => f.name === filterName)?.keywords || []);
   };
 
   return (
     <ul style={filterListStyle}>
-      {filters.map((filter, index) => {
-        const count = calculateFilterCount(filter.keywords);
-        const isSelected = filter.name === selectedFilter;
-
-        return (
-          <li 
-            key={index} 
-            style={filterItemStyle(isSelected)}
-            onClick={() => handleFilterClick(filter.name)}
-          >
-            <span style={filterIconStyle}>{filter.icon}</span>
-            {filter.name}
-            <span style={badgeStyle}>{count}</span>
-          </li>
-        );
-      })}
+      {sortedFilters.map((filter, index) => (
+        <li
+          key={index}
+          style={filterItemStyle(filter.name === selectedFilter)}
+          onClick={() => handleFilterClick(filter.name)}
+        >
+          <span style={filterIconStyle}>{filter.icon}</span>
+          {filter.name}
+          <span style={badgeStyle}>{filter.count}</span>
+        </li>
+      ))}
     </ul>
   );
 };
