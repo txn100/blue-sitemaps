@@ -43,7 +43,7 @@ const StyledBadge = {
   fontSize: '0.75em',
 };
 
-const LinkCard = ({ title, content, link, badge }) => {
+const LinkCard = ({ title, content, link, badge, website }) => {
   // Event handler for clicking on the card
   const handleClick = () => {
     window.location.href = link;
@@ -53,6 +53,7 @@ const LinkCard = ({ title, content, link, badge }) => {
     <div style={StyledLinkCard} onClick={handleClick}>
       <div style={StyledTitle}>{title}</div>
       <div style={StyledContent}>{content}</div>
+      <div style={StyledContent}>{website}</div>
       {badge && <div style={StyledBadge}>{badge}</div>} 
     </div>
   );

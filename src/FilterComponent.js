@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Styles for the FilterComponent
 const filterListStyle = {
@@ -7,14 +7,16 @@ const filterListStyle = {
   listStyle: 'none',
 };
 
-const filterItemStyle = {
+const filterItemStyle = (isSelected) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '10px',
   margin: '10px 0',
   borderRadius: '5px',
   cursor: 'pointer',
-};
+  backgroundColor: isSelected ? '#f0f0f0' : 'transparent',
+  boxShadow: isSelected ? '0px 0px 8px rgba(0, 0, 0, 0.2)' : 'none',
+});
 
 const filterIconStyle = {
   marginRight: '10px',
@@ -28,35 +30,59 @@ const badgeStyle = {
   fontSize: '0.8em',
 };
 
-// Mock data for the filters
+// Updated filters with keyword variations
 const filters = [
-  { name: 'powerbi', count: 1, icon: '📘' },
-  { name: 'Fabric', icon: '📊' },
-  { name: 'Synapse', icon: '🌐' },
-  { name: 'D365', icon: '⚡' },
-  { name: 'Dataverse', count: 1, icon: '📘' },
-  { name: 'Python', icon: '📊' },
-  { name: 'git', icon: '🌐' },
-  { name: 'Cloud', icon: '⚡' },
-  { name: 'Certification', icon: '⚡' },
-  { name: 'Unfiltered', icon: '' }
-  // ... add all other filters here
+  { name: 'PowerBI', keywords: ['power bi', 'powerbi', 'Power BI'], icon: '📘' },
+  { name: 'Fabric', keywords: ['Fabric', 'fabric'], icon: '📊' },
+  { name: 'Synapse', keywords: ['Synapse', 'synapse'], icon: '🌐' },
+  { name: 'D365', keywords: ['D365', 'd365'], icon: '⚡' },
+  { name: 'Dataverse', keywords: ['Dataverse', 'dataverse'], icon: '📘' },
+  { name: 'Python', keywords: ['Python', 'python'], icon: '📊' },
+  { name: 'Git', keywords: ['git', 'Git'], icon: '🌐' },
+  { name: 'Cloud', keywords: ['Cloud', 'cloud'], icon: '⚡' },
+  { name: 'Certification', keywords: ['Certification', 'certification'], icon: '⚡' },
+  { name: 'Unfiltered', keywords: [], icon: 'All' },
 ];
 
-const FilterComponent = ({ onFilterSelect }) => {
+const FilterComponent = ({ articles, onFilterSelect }) => {
+  const [selectedFilter, setSelectedFilter] = useState('Unfiltered');
+
+  const articleMatchesKeywords = (article, keywords) => {
+    if (keywords.length === 0) return true; // Match all for Unfiltered
+    const articleLower = article.cured_name.toLowerCase();
+    return keywords.some(keyword => articleLower.includes(keyword.toLowerCase()));
+  };
+
+  const calculateFilterCount = (filterKeywords) => {
+    return articles.filter(article => 
+      article.cured_name && articleMatchesKeywords(article, filterKeywords)
+    ).length;
+  };
+
+  const handleFilterClick = (filterName) => {
+    setSelectedFilter(filterName);
+    const filterKeywords = filters.find(f => f.name === filterName)?.keywords || [];
+    onFilterSelect(filterKeywords);
+  };
+
   return (
     <ul style={filterListStyle}>
-      {filters.map((filter, index) => (
-        <li 
-          key={index} 
-          style={filterItemStyle}
-          onClick={() => onFilterSelect(filter.name)}
-        >
-          <span style={filterIconStyle}>{filter.icon}</span>
-          {filter.name}
-          {filter.count && <span style={badgeStyle}>{filter.count}</span>}
-        </li>
-      ))}
+      {filters.map((filter, index) => {
+        const count = calculateFilterCount(filter.keywords);
+        const isSelected = filter.name === selectedFilter;
+
+        return (
+          <li 
+            key={index} 
+            style={filterItemStyle(isSelected)}
+            onClick={() => handleFilterClick(filter.name)}
+          >
+            <span style={filterIconStyle}>{filter.icon}</span>
+            {filter.name}
+            <span style={badgeStyle}>{count}</span>
+          </li>
+        );
+      })}
     </ul>
   );
 };

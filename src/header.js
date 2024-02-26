@@ -1,25 +1,43 @@
 import React from 'react';
-import image from './img.png'
-// Style for the header component
-const headerStyle = {
+import image from './img.png';
 
-  backgroundImage: `url(${image})`, // Update with your image path
+const headerStyle = {
+  backgroundImage: `url(${image})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   width: '100%',
-  height: '400px', // Adjust the height as needed
+  height: '400px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  color: 'white', // Assuming the text color should be white to stand out
-  fontSize: '2em', // Large text for the app name
-  textShadow: '2px 2px 4px rgba(0,0,0,0.5)', // Text shadow for better readability
+  color: 'white',
+  fontSize: '2em',
+  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
 };
 
-const Header = ({ appName }) => {
+const searchInputStyle = {
+  padding: '10px',
+  margin: '0 20px',
+  borderRadius: '5px',
+  border: '1px solid #d0d0d0',
+};
+
+const Header = ({ appName, onSearch, websites, onWebsiteSelect }) => {
   return (
     <header style={headerStyle}>
       {appName}
+      <input 
+        type="text" 
+        placeholder="Search articles..." 
+        style={searchInputStyle}
+        onChange={(e) => onSearch(e.target.value)}
+      />
+      <select onChange={(e) => onWebsiteSelect(e.target.value)}>
+        <option value="">Select a Website</option>
+        {websites.map((website, index) => (
+          <option key={index} value={website}>{website}</option>
+        ))}
+      </select>
     </header>
   );
 };

@@ -6,9 +6,12 @@ import FilterComponent from './FilterComponent';
 
 const App = () => {
   const [articles, setArticles] = useState([]);
-  const [filteredArticles, setFilteredArticles] = useState([]);
+  const [displayedArticles, setDisplayedArticles] = useState([]);
   const [sortOrder, setSortOrder] = useState('desc');
-  const [currentFilter, setCurrentFilter] = useState('Unfiltered');
+  const [currentFilterKeywords, setCurrentFilterKeywords] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedWebsite, setSelectedWebsite] = useState('');
+  const [uniqueWebsites, setUniqueWebsites] = useState([]);
 
   useEffect(() => {
     const fetchCSV = async () => {
@@ -20,43 +23,54 @@ const App = () => {
       Papa.parse(csv, {
         header: true,
         complete: (results) => {
-          const articlesWithDates = results.data.map((article) => ({
+          const articlesWithDates = results.data.map(article => ({
             ...article,
-            date: new Date(article.lastmod)
+            date: new Date(article.lastmod),
+            cured_name: article.cured_name || 'No Title'
           }));
           setArticles(articlesWithDates);
+          const websites = [...new Set(articlesWithDates.map(article => article.website))].filter(Boolean);
+          setUniqueWebsites(websites);
         }
       });
     };
-
     fetchCSV();
   }, []);
 
   useEffect(() => {
-    // Filter and sort logic
-    const sortedArticles = [...articles].sort((a, b) => sortOrder === 'asc' ? a.date - b.date : b.date - a.date);
-    
-    if (currentFilter === 'Unfiltered') {
-      setFilteredArticles(sortedArticles);
-    } else {
-      const filtered = sortedArticles.filter(article => 
-        article.cured_name && article.cured_name.toLowerCase().includes(currentFilter.toLowerCase())
-      );
-      setFilteredArticles(filtered);
-    }
-  }, [sortOrder, articles, currentFilter]);
+    const filteredArticles = articles.filter(article => {
+      const articleLower = article.cured_name.toLowerCase();
+      return (currentFilterKeywords.length === 0 || currentFilterKeywords.some(keyword => articleLower.includes(keyword.toLowerCase())))
+        && (!searchQuery || articleLower.includes(searchQuery.toLowerCase()))
+        && (!selectedWebsite || article.website === selectedWebsite);
+    }).sort((a, b) => sortOrder === 'asc' ? a.date - b.date : b.date - a.date);
 
-  const handleFilterSelection = (filterName) => {
-    setCurrentFilter(filterName);
+    setDisplayedArticles(filteredArticles);
+  }, [sortOrder, articles, currentFilterKeywords, searchQuery, selectedWebsite]);
+
+  const handleFilterSelection = (keywords) => {
+    setCurrentFilterKeywords(keywords);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleWebsiteSelect = (website) => {
+    setSelectedWebsite(website);
   };
 
   return (
     <>
-      <Header appName="Real-Time Articles" />
-
+      <Header 
+        appName="Real-Time Articles" 
+        onSearch={handleSearch} 
+        websites={uniqueWebsites} 
+        onWebsiteSelect={handleWebsiteSelect}
+      />
       <div style={{ display: 'flex' }}>
         <div style={{ width: '20%', minWidth: '200px' }}>
-          <FilterComponent onFilterSelect={handleFilterSelection} />
+          <FilterComponent articles={articles} onFilterSelect={handleFilterSelection} />
           <div style={{ padding: '0 20px' }}>
             <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
               <option value="desc">Newest First</option>
@@ -64,14 +78,14 @@ const App = () => {
             </select>
           </div>
         </div>
-
         <div style={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
-          {filteredArticles.map((article, index) => (
+          {displayedArticles.map((article, index) => (
             <LinkCard 
               key={index}
-              title={article.cured_name || 'No Title'}
+              title={article.cured_name}
               content={article.lastmod ? new Date(article.lastmod).toLocaleDateString() : 'No Date'}
               link={article.loc}
+              website={article.website}
             />
           ))}
         </div>
@@ -81,4 +95,3 @@ const App = () => {
 };
 
 export default App;
-
