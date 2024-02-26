@@ -119,6 +119,7 @@ const App = () => {
               content={article.lastmod ? new Date(article.lastmod).toLocaleDateString() : 'No Date'}
               link={article.loc}
               website={article.website}
+              date={article.date} // Passing the date to LinkCard
             />
           ))}
         </div>

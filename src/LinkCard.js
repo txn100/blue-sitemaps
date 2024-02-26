@@ -13,7 +13,7 @@ const StyledLinkCard = {
   boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
   cursor: 'pointer',
   width: '300px',
-  height: '150px', // Adjusted height
+  height: '200', // Adjusted height
   boxSizing: 'border-box',
   textAlign: 'left',
   transition: 'transform 0.3s ease-in-out',
@@ -50,10 +50,27 @@ const StyledBadge = {
   fontSize: '0.75em',
 };
 
-const LinkCard = ({ title, content, link, badge, website }) => {
+const getDaysAgo = (date) => {
+  const today = new Date();
+  const linkDate = new Date(date);
+  const differenceInTime = today.getTime() - linkDate.getTime();
+  const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+  
+  if (differenceInDays === 0) {
+    return 'today';
+  } else if (differenceInDays === 1) {
+    return '1 day ago';
+  } else {
+    return `${differenceInDays} days ago`;
+  }
+};
+
+const LinkCard = ({ title, content, link, badge, website, date }) => {
   const handleClick = () => {
     window.location.href = link;
   };
+
+  const daysAgo = getDaysAgo(date);
 
   return (
     <div 
@@ -66,6 +83,9 @@ const LinkCard = ({ title, content, link, badge, website }) => {
       <div style={StyledContent}>{content}</div>
       <div style={StyledWebsite}>{website}</div>
       {badge && <div style={StyledBadge}>{badge}</div>}
+      <div style={{ fontSize: '0.8em', color: '#888888', marginTop: '5px' }}>
+        {daysAgo}
+      </div>
     </div>
   );
 };
