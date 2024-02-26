@@ -126,14 +126,14 @@ const Header = ({ appName, onSearch, websites, onWebsiteSelect, articleTypes, on
           options={websiteOptions}
           isMulti
           onChange={onWebsiteSelect}
-          placeholder="Select Websites"
+          placeholder="All websites"
         />
         <Select
           styles={multiSelectCustomStyles}
           options={articleTypes}
           isMulti
           onChange={onTypeSelect}
-          placeholder="Select Types"
+          placeholder="All types"
         />
       </div>
     </header>
