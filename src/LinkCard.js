@@ -5,15 +5,14 @@ const StyledLinkCard = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  padding: '15px', // Reduced padding
+  padding: '15px',
   margin: '10px auto',
   backgroundColor: '#ffffff',
-  border: '1px solid #d0d0d0',
   borderRadius: '10px',
   boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
   cursor: 'pointer',
   width: '300px',
-  height: '200', // Adjusted height
+  height: '200px',
   boxSizing: 'border-box',
   textAlign: 'left',
   transition: 'transform 0.3s ease-in-out',
@@ -21,8 +20,8 @@ const StyledLinkCard = {
 
 const StyledTitle = {
   fontWeight: 'bold',
-  fontSize: '1.1em', // Slightly reduced font size
-  marginBottom: '5px', // Reduced margin
+  fontSize: '1.1em',
+  marginBottom: '5px',
 };
 
 const StyledContent = {
@@ -30,13 +29,13 @@ const StyledContent = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  marginBottom: '5px', // Reduced margin
+  marginBottom: '5px',
 };
 
 const StyledWebsite = {
   color: '#007bff',
   fontSize: '0.9em',
-  marginBottom: '10px', // Reduced space before badge
+  marginBottom: '10px',
 };
 
 const StyledBadge = {
@@ -50,31 +49,43 @@ const StyledBadge = {
   fontSize: '0.75em',
 };
 
+const getBorderColorByType = (type) => {
+  switch (type) {
+    case 'youtube':
+      return 'red';
+    case 'blog':
+      return 'blue';
+    default:
+      return '#d0d0d0'; // Default border color
+  }
+};
+
 const getDaysAgo = (date) => {
   const today = new Date();
   const linkDate = new Date(date);
   const differenceInTime = today.getTime() - linkDate.getTime();
   const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
   
-  if (differenceInDays === 0) {
-    return 'today';
-  } else if (differenceInDays === 1) {
-    return '1 day ago';
-  } else {
-    return `${differenceInDays} days ago`;
-  }
+  return differenceInDays === 0 ? 'today' :
+         differenceInDays === 1 ? '1 day ago' :
+         `${differenceInDays} days ago`;
 };
 
-const LinkCard = ({ title, content, link, badge, website, date }) => {
+const LinkCard = ({ title, content, link, badge, website, date, type }) => {
   const handleClick = () => {
     window.location.href = link;
   };
 
   const daysAgo = getDaysAgo(date);
 
+  const dynamicStyle = {
+    ...StyledLinkCard,
+    border: `1px solid ${getBorderColorByType(type)}`,
+  };
+
   return (
     <div 
-      style={StyledLinkCard} 
+      style={dynamicStyle} 
       onClick={handleClick}
       onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
       onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}

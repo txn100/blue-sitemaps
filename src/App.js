@@ -112,16 +112,17 @@ const App = () => {
           </div>
         </div>
         <div style={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
-          {displayedArticles.map((article, index) => (
-            <LinkCard 
-              key={index}
-              title={article.cured_name}
-              content={article.lastmod ? new Date(article.lastmod).toLocaleDateString() : 'No Date'}
-              link={article.loc}
-              website={article.website}
-              date={article.date} // Passing the date to LinkCard
-            />
-          ))}
+        {displayedArticles.map((article, index) => (
+          <LinkCard 
+            key={index}
+            title={article.cured_name}
+            content={article.lastmod ? new Date(article.lastmod).toLocaleDateString() : 'No Date'}
+            link={article.loc}
+            website={article.website}
+            date={article.date}
+            type={article.type} // Add this line to pass the type
+          />
+))}
         </div>
       </div>
     </>
