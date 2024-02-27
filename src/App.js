@@ -91,6 +91,16 @@ const App = () => {
     setSelectedTypes(types.map(type => type.value));
   };
 
+  const containerStyle = {
+    flex: 1,
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '20px',
+    justifyContent: displayedArticles.length === 1 ? 'flex-start' : 'space-between',
+    alignContent: 'flex-start',
+    // Add other necessary styles
+  };
+  
   return (
     <>
       <Header 
@@ -111,7 +121,7 @@ const App = () => {
             </select>
           </div>
         </div>
-        <div style={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+        <div style={containerStyle}>
         {displayedArticles.map((article, index) => (
           <LinkCard 
             key={index}
