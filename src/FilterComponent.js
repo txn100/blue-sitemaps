@@ -42,6 +42,7 @@ const filters = [
   { name: 'Git', keywords: ['git', 'Git'], icon: '🌐' },
   { name: 'Cloud', keywords: ['Cloud', 'cloud'], icon: '☁️' },
   { name: 'Certification', keywords: ['Certification', 'certification'], icon: '⚡' },
+  { name: 'Big Query', keywords: ['big query', 'google', 'Big Query', 'Google', 'bigquery'], icon: '⚡' },
  
 ];
 
