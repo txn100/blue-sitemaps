@@ -38,15 +38,12 @@ const StyledWebsite = {
   marginBottom: '10px',
 };
 
-const StyledBadge = {
+const YouTubeBadge = {
   position: 'absolute',
   bottom: '10px',
   right: '10px',
-  backgroundColor: '#007bff',
-  color: 'white',
-  padding: '5px 10px',
-  borderRadius: '20px',
-  fontSize: '0.75em',
+  width: '100px', // Adjust size as needed
+  height: '30px', // Adjust size as needed
 };
 
 const getBorderColorByType = (type) => {
@@ -71,7 +68,7 @@ const getDaysAgo = (date) => {
          `${differenceInDays} days ago`;
 };
 
-const LinkCard = ({ title, content, link, badge, website, date, type }) => {
+const LinkCard = ({ title, content, link, website, date, type }) => {
   const handleClick = () => {
     window.location.href = link;
   };
@@ -93,7 +90,12 @@ const LinkCard = ({ title, content, link, badge, website, date, type }) => {
       <div style={StyledTitle}>{title}</div>
       <div style={StyledContent}>{content}</div>
       <div style={StyledWebsite}>{website}</div>
-      {badge && <div style={StyledBadge}>{badge}</div>}
+      {type === 'youtube' && 
+        <img 
+          src="https://img.shields.io/badge/YouTube-%23FF0000.svg?&logo=YouTube&logoColor=white" 
+          alt="YouTube" 
+          style={YouTubeBadge} 
+        />}
       <div style={{ fontSize: '0.8em', color: '#888888', marginTop: '5px' }}>
         {daysAgo}
       </div>
