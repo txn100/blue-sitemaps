@@ -1,26 +1,31 @@
 import React from 'react';
 import Select from 'react-select';
-import image from './img.png';
+import image from './banniere3.png';
 
 const headerStyle = {
+
   backgroundImage: `url(${image})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   width: '100%',
   height: '400px',
   display: 'flex',
+  padding:'20px',
   flexDirection: 'column',
   justifyContent: 'center',
-  alignItems: 'center',
-  color: 'white',
+  alignItems: 'flex-start', // Align items to start (left // Add padding
+  color: 'black',
   fontSize: '2em',
+  backgroundColor :'black'
 };
 
 const searchContainerStyle = {
   display: 'flex',
-  flexDirection: 'column', // Stack elements vertically
-  alignItems: 'center',
-  marginTop: '20px',
+  flexDirection: 'column',
+  alignSelf: 'flex-end', // Align the container to the bottom
+  alignItems: 'flex-start', // Align items to start (left)
+  width: '100%', // Full width to push container to bottom
+  marginTop: 'auto', // Push container to the bottom
 };
 
 const searchInputStyle = {
@@ -28,8 +33,9 @@ const searchInputStyle = {
   borderRadius: '20px',
   border: '1px solid #d0d0d0',
   outline: 'none',
-  width: '400px', // Increased width
-  marginBottom: '10px', // Space between search box and selects
+  width: '100%', // Responsive width
+  maxWidth: '400px', // Max width for larger screens
+  marginBottom: '10px',
 };
 
 const multiSelectCustomStyles = {

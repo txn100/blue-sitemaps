@@ -15,6 +15,24 @@ const App = () => {
   const [selectedTypes, setSelectedTypes] = useState([]); // Changed to array
   const [uniqueTypes, setUniqueTypes] = useState([]);
 
+
+  const websiteDescription = 
+  [{ name: 'www.kevinrchant.com', description: 'Kevin Le King'},
+  { name: 'thomas-leblanc.com', description:  'Thomas Le bLANC' },
+  { name: 'www.oliviertravers.com', description: 'test'},
+  { name: 'data-mozart.com', description: 'test'},
+  { name: 'www.sqlbi.com', description: 'test'},
+  { name: 'en.brunner.bi', description: 'test'},
+  { name: 'pragmaticworks.com', description: 'test' },
+  { name: 'data-marc.com', description: 'test' },
+  { name: 'www.data-travelling.com', description: 'test' },
+  { name: 'datasavyy.com', description: 'test'},
+  { name: 'www.thatbluecloud.com', description: 'test'},
+  { name: 'GuyInACube', description: 'test'},
+  { name: 'HowToPowerBI', description: 'test' },
+  { name: 'ClubPowerBI', description: 'test'},
+ 
+]; 
   useEffect(() => {
     const fetchCSV = async () => {
       try {
@@ -38,6 +56,8 @@ const App = () => {
         }
         const resultString = new TextDecoder("utf-8").decode(chunksAll);
         Papa.parse(resultString, {
+
+          encoding: 'utf-8',
           header: true,
           complete: (results) => {
             const articlesWithDates = results.data.map(article => ({
@@ -60,6 +80,12 @@ const App = () => {
     };
     fetchCSV();
   }, []);
+
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
 
   useEffect(() => {
     const filteredArticles = articles.filter(article => {
@@ -87,6 +113,16 @@ const App = () => {
     setSelectedWebsites(websites.map(website => website.value));
   };
 
+
+  /*function important */
+  
+  function decodeHtml(html) {
+    var textArea = document.createElement("textarea");
+    textArea.innerHTML = html;
+    return textArea.value;
+  }
+  
+
   const handleTypeSelect = (types) => {
     setSelectedTypes(types.map(type => type.value));
   };
@@ -100,11 +136,17 @@ const App = () => {
     alignContent: 'flex-start',
     // Add other necessary styles
   };
+
+
+  const getWebsiteDescription = (websiteName) => {
+    const matchingWebsite = websiteDescription.find(w => w.name === websiteName);
+    return matchingWebsite ? matchingWebsite.description : 'No Description';
+  };
   
   return (
     <>
       <Header 
-        appName="Real-Time Articles" 
+     
         onSearch={handleSearch} 
         websites={uniqueWebsites} 
         onWebsiteSelect={handleWebsiteSelect}
@@ -125,12 +167,13 @@ const App = () => {
         {displayedArticles.map((article, index) => (
           <LinkCard 
             key={index}
-            title={article.cured_name}
+            title={decodeHtml(capitalizeFirstLetter(article.cured_name))} //actually displays weird caracters, and capitalizes the first letter
             content={article.lastmod ? new Date(article.lastmod).toLocaleDateString() : 'No Date'}
             link={article.loc}
             website={article.website}
             date={article.date}
-            type={article.type} // Add this line to pass the type
+            type={article.type}
+            description={getWebsiteDescription(article.website)} // Add this line to pass the type
           />
 ))}
         </div>
